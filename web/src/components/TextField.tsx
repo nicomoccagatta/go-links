@@ -9,7 +9,7 @@ type TextFieldProps = ComponentProps<"input"> & {
   prefix?: string;
 };
 
-export function TextField({ label, hint, error, prefix, ref, ...inputProps }: TextFieldProps) {
+export function TextField({ label, hint, error, prefix, ...inputProps }: TextFieldProps) {
   const id = useId();
   const hintId = hint ? `${id}-hint` : undefined;
   const errorId = error ? `${id}-error` : undefined;
@@ -28,7 +28,6 @@ export function TextField({ label, hint, error, prefix, ref, ...inputProps }: Te
         )}
         <input
           {...inputProps}
-          ref={ref}
           id={id}
           className={styles.input}
           aria-invalid={error ? true : undefined}

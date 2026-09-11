@@ -1,6 +1,5 @@
-import { GO_BASE_URL } from "../config";
-
-// Mirrors the API's rules for instant feedback; the server stays the source of truth.
+// Mirrors the API's rules for instant feedback, except the redirect-loop check, which depends on
+// server config. The server stays the source of truth.
 const SLUG_PATTERN = /^[a-z0-9](?:[a-z0-9-]{0,62}[a-z0-9])?$/;
 const RESERVED_SLUGS = new Set(["api", "healthz", "metrics", "docs", "redoc", "static"]);
 const ALLOWED_PROTOCOLS = new Set(["http:", "https:"]);
@@ -46,11 +45,8 @@ function validateTargetUrl(value: string): string | undefined {
   const url = URL.parse(value);
   const isWebUrl = url !== null && ALLOWED_PROTOCOLS.has(url.protocol) && url.hostname !== "";
   const hasWhitespace = /\s/.test(value);
-  if (url === null || !isWebUrl || hasWhitespace) {
+  if (!isWebUrl || hasWhitespace) {
     return "Enter an absolute http(s) URL, like https://example.com/page.";
-  }
-  if (url.hostname === new URL(GO_BASE_URL).hostname) {
-    return "Can't point at go links itself: it would redirect in a loop.";
   }
   return undefined;
 }

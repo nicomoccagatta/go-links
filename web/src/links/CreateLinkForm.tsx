@@ -1,5 +1,4 @@
-import { type FormEvent, useRef, useState } from "react";
-import { flushSync } from "react-dom";
+import { type FormEvent, useState } from "react";
 import type { ApiError, FieldError } from "../api/errors";
 import buttons from "../components/buttons.module.css";
 import { TextField } from "../components/TextField";
@@ -29,30 +28,17 @@ export function CreateLinkForm({ initialSlug, onCreated, onFailed }: CreateLinkF
   });
   const [errors, setErrors] = useState<FieldErrors>({});
   const createLink = useCreateLink();
-  const slugRef = useRef<HTMLInputElement>(null);
-  const targetUrlRef = useRef<HTMLInputElement>(null);
-  const descriptionRef = useRef<HTMLInputElement>(null);
 
   function updateField(field: LinkField, value: string) {
     setDraft((current) => ({ ...current, [field]: value }));
     setErrors((current) => ({ ...current, [field]: undefined }));
   }
 
-  function showErrors(nextErrors: FieldErrors) {
-    // Render the messages first, so the focused field is announced with its error.
-    flushSync(() => setErrors(nextErrors));
-    const inputs = { slug: slugRef, target_url: targetUrlRef, description: descriptionRef };
-    const firstInvalid = LINK_FIELDS.find((field) => nextErrors[field]);
-    if (firstInvalid) {
-      inputs[firstInvalid].current?.focus();
-    }
-  }
-
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const clientErrors = validateLink(draft);
     if (Object.keys(clientErrors).length > 0) {
-      showErrors(clientErrors);
+      setErrors(clientErrors);
       return;
     }
 
@@ -66,7 +52,7 @@ export function CreateLinkForm({ initialSlug, onCreated, onFailed }: CreateLinkF
       {
         onSuccess: (link) => onCreated(link),
         onError: (error) => {
-          showErrors(fieldErrorsFrom(error.details));
+          setErrors(fieldErrorsFrom(error.details));
           onFailed(error);
         },
       },
@@ -76,7 +62,6 @@ export function CreateLinkForm({ initialSlug, onCreated, onFailed }: CreateLinkF
   return (
     <form className={styles.form} noValidate onSubmit={handleSubmit}>
       <TextField
-        ref={slugRef}
         name="slug"
         label="Short name"
         prefix="go/"
@@ -91,7 +76,6 @@ export function CreateLinkForm({ initialSlug, onCreated, onFailed }: CreateLinkF
         autoFocus={initialSlug === ""}
       />
       <TextField
-        ref={targetUrlRef}
         name="target_url"
         type="url"
         label="Destination URL"
@@ -103,7 +87,6 @@ export function CreateLinkForm({ initialSlug, onCreated, onFailed }: CreateLinkF
         autoFocus={initialSlug !== ""}
       />
       <TextField
-        ref={descriptionRef}
         name="description"
         label="Description (optional)"
         hint={`What's behind the link, in up to ${MAX_DESCRIPTION_LENGTH} characters.`}

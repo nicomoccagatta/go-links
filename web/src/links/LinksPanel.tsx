@@ -1,9 +1,11 @@
 import { useId, useState } from "react";
 import buttons from "../components/buttons.module.css";
 import { Notice } from "../components/Notice";
-import { LinkList } from "./LinkList";
 import styles from "./LinksPanel.module.css";
 import { type Link, useLinks } from "./queries";
+
+// go/<slug> resolves at the API's redirect endpoint, not in this SPA.
+const GO_BASE_URL = import.meta.env.VITE_GO_BASE_URL ?? "http://localhost:8000";
 
 type LinksPanelProps = {
   onCreateFirst: () => void;
@@ -85,7 +87,24 @@ function LinksBody({ filter, onCreateFirst }: LinksBodyProps) {
   if (visibleLinks.length === 0) {
     return <p className={styles.empty}>No links match “{filter.trim()}”.</p>;
   }
-  return <LinkList links={visibleLinks} />;
+  return (
+    <ul role="list" className={styles.list}>
+      {visibleLinks.map((link) => (
+        <li key={link.slug} className={styles.item}>
+          <a className={styles.slug} href={`${GO_BASE_URL}/${link.slug}`}>
+            go/{link.slug}
+          </a>
+          <span className={styles.visits}>
+            {link.visit_count} {link.visit_count === 1 ? "visit" : "visits"}
+          </span>
+          <span className={styles.target} title={link.target_url}>
+            {link.target_url}
+          </span>
+          {link.description && <p className={styles.description}>{link.description}</p>}
+        </li>
+      ))}
+    </ul>
+  );
 }
 
 function filterLinks(links: Link[], filter: string): Link[] {

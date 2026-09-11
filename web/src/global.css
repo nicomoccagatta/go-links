@@ -80,24 +80,3 @@
     font-size: 0.9em;
   }
 }
-
-/* View transitions for <ViewTransition enter="link-enter">. Global because CSS Modules would hash
-   the class inside the pseudo-element selector. */
-::view-transition-new(.link-enter):only-child {
-  animation: link-enter 280ms ease-out;
-}
-
-@keyframes link-enter {
-  from {
-    opacity: 0;
-    transform: translateY(-0.5rem);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  ::view-transition-group(*),
-  ::view-transition-old(*),
-  ::view-transition-new(*) {
-    animation: none;
-  }
-}

@@ -57,15 +57,16 @@ client gets it typed:
 
 ```
 api/src/golinks_api/
-  main.py           app factory: settings, DB, middleware, routers
-  links.py          /api/links          redirect.py   /{slug}          ops.py  /healthz, /metrics
+  main.py           app factory: settings, DB, middleware, routes
+  routes.py         every endpoint: /api/links, /healthz, /metrics, and /{slug} last
+  db.py             engine, session dependency, Link model
   schemas.py        request/response models and validation rules
   errors.py         ApiError, the error envelope, exception handlers
   middleware.py     request ID, access log, metrics, 500 envelope
   observability.py  JSON log formatter, Prometheus metrics
 web/src/
   api/              openapi-fetch client, generated schema, ApiError parser
-  links/            queries, validation, form, list
+  links/            queries, validation, create form, list with filter
   components/       TextField, Notice, button styles
 ```
 
@@ -128,12 +129,10 @@ Smaller calls:
 - **Duplicate slugs are caught by the unique constraint.** The `IntegrityError` maps to 409, rather
   than a check-then-insert that can race.
 - **The client mirrors the server's validation.** That gives instant feedback, but the server stays
-  the source of truth: 409 and 422 `details` map onto form fields.
+  the source of truth: 409 and 422 `details` map onto form fields. The redirect-loop check is
+  server-only, because it depends on server config.
 - **The app factory (`create_app(settings)`) gives each test its own SQLite file** without
   dependency overrides.
-- **`<ViewTransition>` animates new links in.** It's fed through `useDeferredValue`, because
-  TanStack Query's updates are synchronous and view transitions only run on transitions. It's
-  disabled under `prefers-reduced-motion`.
 - **pytest still uses httpx.** Starlette 1.6 deprecates `httpx` for its TestClient in favor of
   `httpx2`, so pytest prints that warning. I kept the specified stack; switching is a one-line dev
   dependency change.
@@ -154,8 +153,7 @@ Smaller calls:
 - **A Trusted Types CSP.** Relevant hardening for an app that renders URLs, and React 19.3
   supports it.
 - **Broad frontend tests.** Only the `ApiError` envelope parser is tested. The first ones to add
-  would cover the form: `?new=` prefill, mapping 409/422 `details` to fields, and focus moving to
-  the first invalid field.
+  would cover the form: `?new=` prefill and mapping 409/422 `details` to fields.
 
 ## What I'd do with another day
 
@@ -170,6 +168,8 @@ Smaller calls:
   guidance.
 - **Postgres**, with Alembic migrations.
 - **Frontend tests** for the form flows above, and filtering bots out of visit counts.
+- **Form polish** left out to keep this iteration small: moving focus to the first invalid field on
+  submit, and animating new links in with `<ViewTransition>`.
 
 ## Time spent
 

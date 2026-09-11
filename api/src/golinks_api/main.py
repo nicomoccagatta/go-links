@@ -4,11 +4,11 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from sqlalchemy.orm import sessionmaker
 
-from golinks_api import links, ops, redirect
 from golinks_api.db import Base, create_db_engine
 from golinks_api.errors import install_error_handlers
 from golinks_api.middleware import observe_request
 from golinks_api.observability import configure_logging
+from golinks_api.routes import router
 from golinks_api.settings import Settings
 
 
@@ -37,10 +37,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     app.middleware("http")(observe_request)
     install_error_handlers(app)
-    app.include_router(links.router)
-    app.include_router(ops.router)
-    # Last: /{slug} matches every single-segment path.
-    app.include_router(redirect.router)
+    app.include_router(router)
     return app
 
 

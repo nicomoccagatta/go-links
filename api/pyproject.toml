@@ -1,0 +1,43 @@
+[project]
+name = "golinks-api"
+version = "0.1.0"
+description = "Go Links: internal URL shortcuts (go/oncall -> https://...)."
+requires-python = ">=3.14"
+dependencies = [
+    "fastapi[standard]>=0.141.1",
+    "prometheus-client>=0.26.0",
+    "pydantic>=2.13.5",
+    "pydantic-settings>=2.15.0",
+    "sqlalchemy>=2.0.52,<2.1",
+]
+
+[build-system]
+requires = ["uv_build>=0.12.13,<0.13.0"]
+build-backend = "uv_build"
+
+# Dev tooling is pinned exactly: linters and type checkers change behavior between releases.
+[dependency-groups]
+dev = [
+    "httpx==0.28.1",
+    "pyrefly==1.3.0",
+    "pytest==9.1.1",
+    "ruff==0.16.7",
+]
+
+[tool.fastapi]
+entrypoint = "golinks_api.main:app"
+
+[tool.ruff]
+line-length = 100
+target-version = "py314"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM", "RUF", "DTZ"]
+
+[tool.pyrefly]
+project-includes = ["src", "tests"]
+search-path = ["src"]
+python-version = "3.14"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

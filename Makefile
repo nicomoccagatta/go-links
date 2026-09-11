@@ -23,6 +23,7 @@ gen:
 
 test:
 	cd api && uv run pytest
+	cd web && pnpm exec vp test run
 
 check:
 	cd api && uv run ruff check . && uv run ruff format --check . && uv run pyrefly check

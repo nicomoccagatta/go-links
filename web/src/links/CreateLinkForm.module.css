@@ -1,0 +1,11 @@
+@layer components {
+  .form {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .actions {
+    display: flex;
+    justify-content: flex-end;
+  }
+}

@@ -1,0 +1,61 @@
+@layer components {
+  .field {
+    display: grid;
+    gap: 0.25rem;
+  }
+
+  .label {
+    font-weight: 600;
+  }
+
+  .control {
+    display: flex;
+    align-items: stretch;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius);
+    background: var(--surface);
+
+    &:focus-within {
+      outline: 2px solid var(--accent);
+      outline-offset: 1px;
+    }
+
+    &[data-invalid] {
+      border-color: var(--danger);
+    }
+  }
+
+  .prefix {
+    display: grid;
+    place-items: center;
+    padding-inline: 0.625rem;
+    border-inline-end: 1px solid var(--border);
+    color: var(--muted);
+    font-family: var(--font-mono);
+  }
+
+  .input {
+    flex: 1;
+    min-width: 0;
+    padding: 0.5rem 0.625rem;
+    border: 0;
+    border-radius: var(--radius);
+    background: transparent;
+    color: inherit;
+
+    /* The wrapper draws the focus ring so it includes the prefix. */
+    &:focus-visible {
+      outline: none;
+    }
+  }
+
+  .hint {
+    color: var(--muted);
+    font-size: 0.875rem;
+  }
+
+  .error {
+    color: var(--danger);
+    font-size: 0.875rem;
+  }
+}

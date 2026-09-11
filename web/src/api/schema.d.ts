@@ -12,7 +12,59 @@ export interface paths {
       cookie?: never;
     };
     /** List Links */
-    get: operations["list_links_api_links_get"];
+    get: operations["list_links"];
+    put?: never;
+    /** Create Link */
+    post: operations["create_link"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/links/{slug}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get Link */
+    get: operations["get_link"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/healthz": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Healthz */
+    get: operations["healthz"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/{slug}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Follow Link */
+    get: operations["follow_link"];
     put?: never;
     post?: never;
     delete?: never;
@@ -25,10 +77,67 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
   schemas: {
+    /** ErrorBody */
+    ErrorBody: {
+      /** Code */
+      code: string;
+      /** Message */
+      message: string;
+      /** Request Id */
+      request_id: string;
+      /** Details */
+      details?: components["schemas"]["ErrorDetail"][] | null;
+    };
+    /** ErrorDetail */
+    ErrorDetail: {
+      /** Field */
+      field: string;
+      /** Message */
+      message: string;
+    };
+    /** ErrorResponse */
+    ErrorResponse: {
+      error: components["schemas"]["ErrorBody"];
+    };
+    /** Health */
+    Health: {
+      /**
+       * Status
+       * @constant
+       */
+      status: "ok";
+    };
+    /** LinkCreate */
+    LinkCreate: {
+      /** Slug */
+      slug: string;
+      /** Target Url */
+      target_url: string;
+      /** Description */
+      description?: string | null;
+    };
     /** LinkList */
     LinkList: {
       /** Items */
-      items: string[];
+      items: components["schemas"]["LinkOut"][];
+    };
+    /** LinkOut */
+    LinkOut: {
+      /** Slug */
+      slug: string;
+      /** Target Url */
+      target_url: string;
+      /** Description */
+      description: string | null;
+      /** Visit Count */
+      visit_count: number;
+      /** Last Visited At */
+      last_visited_at: string | null;
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string;
     };
   };
   responses: never;
@@ -39,7 +148,7 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
-  list_links_api_links_get: {
+  list_links: {
     parameters: {
       query?: never;
       header?: never;
@@ -55,6 +164,191 @@ export interface operations {
         };
         content: {
           "application/json": components["schemas"]["LinkList"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorResponse"];
+        };
+      };
+    };
+  };
+  create_link: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["LinkCreate"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["LinkOut"];
+        };
+      };
+      /** @description Conflict */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorResponse"];
+        };
+      };
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorResponse"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorResponse"];
+        };
+      };
+    };
+  };
+  get_link: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        slug: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["LinkOut"];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorResponse"];
+        };
+      };
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorResponse"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorResponse"];
+        };
+      };
+    };
+  };
+  healthz: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Health"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorResponse"];
+        };
+      };
+      /** @description Service Unavailable */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorResponse"];
+        };
+      };
+    };
+  };
+  follow_link: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        slug: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description To the link's target, or to the create page if it doesn't exist. */
+      302: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unprocessable Content */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorResponse"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorResponse"];
         };
       };
     };

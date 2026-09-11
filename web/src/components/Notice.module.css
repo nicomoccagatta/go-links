@@ -1,0 +1,29 @@
+@layer components {
+  .notice {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--info-surface);
+
+    &[data-tone="success"] {
+      border-color: var(--success);
+      background: var(--success-surface);
+    }
+
+    &[data-tone="error"] {
+      border-color: var(--danger);
+      background: var(--danger-surface);
+    }
+  }
+
+  .requestId {
+    color: var(--muted);
+    font-size: 0.875rem;
+    white-space: nowrap;
+  }
+}

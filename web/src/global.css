@@ -1,4 +1,103 @@
-:root {
-  color-scheme: light dark;
-  font-family: system-ui, sans-serif;
+@layer reset, base, components;
+
+@layer reset {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  body,
+  h1,
+  h2,
+  p,
+  ul {
+    margin: 0;
+  }
+
+  ul[role="list"] {
+    padding: 0;
+    list-style: none;
+  }
+
+  input,
+  button {
+    font: inherit;
+  }
+}
+
+@layer base {
+  :root {
+    color-scheme: light dark;
+
+    --bg: light-dark(#f6f7f9, #111317);
+    --surface: light-dark(#ffffff, #1a1d23);
+    --text: light-dark(#16181d, #e8eaee);
+    --muted: light-dark(#5b6270, #9aa2b1);
+    --border: light-dark(#e2e5ea, #2a2f38);
+    --border-strong: light-dark(#c3c8d1, #4a5260);
+    --accent: light-dark(#1d4ed8, #8db0ff);
+    --accent-contrast: light-dark(#ffffff, #0b1020);
+    --danger: light-dark(#b42318, #ff9a91);
+    --danger-surface: light-dark(#fef3f2, #2b1715);
+    --success: light-dark(#067647, #75e0a7);
+    --success-surface: light-dark(#ecfdf3, #10241a);
+    --info-surface: light-dark(#eff4ff, #161e33);
+    --radius: 0.5rem;
+    --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+    font-family:
+      system-ui,
+      -apple-system,
+      "Segoe UI",
+      sans-serif;
+    line-height: 1.5;
+    color: var(--text);
+    background: var(--bg);
+  }
+
+  body {
+    min-height: 100dvh;
+  }
+
+  h1,
+  h2 {
+    line-height: 1.2;
+  }
+
+  a {
+    color: var(--accent);
+    text-underline-offset: 0.15em;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  code {
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+  }
+}
+
+/* View transitions for <ViewTransition enter="link-enter">. Global because CSS Modules would hash
+   the class inside the pseudo-element selector. */
+::view-transition-new(.link-enter):only-child {
+  animation: link-enter 280ms ease-out;
+}
+
+@keyframes link-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-0.5rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none;
+  }
 }

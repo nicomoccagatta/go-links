@@ -173,4 +173,14 @@ Smaller calls:
 
 ## Time spent
 
-_TBD_
+About an hour, in three passes:
+
+- **~20 min: toolchain setup.** Resolving versions, scaffolding both apps, and smoke-testing the
+  cutting-edge pieces (Vite+, TS 7, codegen on an isolated TS) before relying on them. This is a
+  one-off cost that most of the first commit reflects.
+- **~30 min: the build.** API, web app, tests and this README.
+- **~15 min: a simplification pass** after reviewing the code: fewer modules, and the optional UI
+  extras dropped.
+
+I used Claude Code as a pair programmer, as the brief allows. I set the stack, the rules and the
+scope, made the calls on the tradeoffs above, and reviewed the code.
